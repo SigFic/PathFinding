@@ -20,6 +20,7 @@ void UFloorGrid::InitialGrid()
 	}
 
 	CreateGrid();
+	setNeighbords();
 }
 
 void UFloorGrid::CreateGrid()
@@ -32,6 +33,56 @@ void UFloorGrid::CreateGrid()
 			Grid[i][j] = Temp;
 			Temp = nullptr;
 			delete Temp;
+		}
+	}
+}
+
+void UFloorGrid::setNeighbords()
+{
+	for (int32 i = 0; i < Rows; i++)
+	{
+		for (int32 j = 0; j < Columns; j++)
+		{
+			GridCell* Temp = GetGridElement(i, j);
+			if (i == 0 || i == Rows - 1)
+			{
+				if (i == 0)
+				{
+					Temp->South = nullptr;
+					Temp->North = GetGridElement(i + 1, j);
+				}
+				else
+				{
+					Temp->South = GetGridElement(i - 1, j);
+					Temp->North = nullptr;
+				}
+			}
+			else
+			{
+				Temp->North = GetGridElement(i + 1, j);
+				Temp->South = GetGridElement(i - 1, j);
+			}
+
+			if (j == 0 || j == Columns - 1)
+			{
+				if (j == 0)
+				{
+					Temp->East = GetGridElement(i, j + 1);
+					Temp->West = nullptr;
+				}
+
+				else
+				{
+					Temp->East = nullptr;
+					Temp->West = GetGridElement(i, j - 1);
+				}
+
+			}
+			else
+			{
+				Temp->East = GetGridElement(i , j + 1);
+				Temp->West = GetGridElement(i , j - 1);
+			}
 		}
 	}
 }

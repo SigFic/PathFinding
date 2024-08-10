@@ -25,6 +25,11 @@ public:
 		Y = inY;
 		bIsWalkable = binIsWalkable;
 	}
+
+	GridCell* North = nullptr;
+	GridCell* South = nullptr;
+	GridCell* East = nullptr;
+	GridCell* West = nullptr;
 };
 
 
@@ -73,4 +78,6 @@ private:
 private:
 
 	void CreateGrid();
+
+	void setNeighbords();
 };
