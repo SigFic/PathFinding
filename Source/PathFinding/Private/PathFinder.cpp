@@ -19,6 +19,12 @@ TArray<FVector> UPathFinder::GetPath(int32 StartX, int32 StartY, int32 EndX, int
 	UE_LOG(LogTemp, Warning, TEXT("Floor grid is available"));
 	GridCell* Start = FloorGrid->GetGridElement(StartX, StartY);
 	GridCell* End = FloorGrid->GetGridElement(EndX, EndY);
+
+	if (!End->bIsWalkable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("End Grid cell is not walkable"));
+		return TArray<FVector>();
+	}
 	TArray<GridCell* > PathInGridCells = FindPath(FloorGrid, Start, End);
 	UE_LOG(LogTemp, Warning, TEXT("pathSize : %d"), PathInGridCells.Num());
 	TArray<FVector> PathInVector;
@@ -90,6 +96,7 @@ TArray<GridCell*> UPathFinder::FindPath(UFloorGrid* Grid, GridCell* StartCell, G
 
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("No path found"));
 	return TArray<GridCell*>();
 }
 

@@ -21,7 +21,9 @@ public:
 	class UFloorGrid* GridRef;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grid")
-	class UPathFinder* PathFinderRef;
+	TSubclassOf<UFloorGrid> GridClass;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grid")
+	//class UPathFinder* PathFinderRef;
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void PrintGrid();

@@ -3,7 +3,7 @@
 
 #include "PathFindingGameMode.h"
 #include "FloorGrid.h"
-#include "PathFinder.h"
+//#include "PathFinder.h"
 
 APathFindingGameMode::APathFindingGameMode()
 {
@@ -11,8 +11,9 @@ APathFindingGameMode::APathFindingGameMode()
 
 void APathFindingGameMode::BeginPlay()
 {
-	PathFinderRef = NewObject<UPathFinder>(this, UPathFinder::StaticClass());
-	GridRef = NewObject<UFloorGrid>(this, UFloorGrid::StaticClass());
+	Super::BeginPlay();
+	//PathFinderRef = NewObject<UPathFinder>(this, UPathFinder::StaticClass());
+	GridRef = NewObject<UFloorGrid>(this, GridClass);
 	if (GridRef)
 	{
 		GridRef->InitialGrid();
