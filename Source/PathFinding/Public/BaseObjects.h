@@ -23,9 +23,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
 	void SetObjectLocation(const FVector& NewLocation, const float GridCellDistance);
 
-	void SetLocationProperties();
+	void SetLocationProperties(const FVector& NewLocation);
+
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
@@ -36,4 +38,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	int32 SizeY;
+
+	void SetObjectSizeXandY();
 };

@@ -58,6 +58,7 @@ void UFloorGrid::setNeighbords()
 
 FVector UFloorGrid::GetGridWorldPosition(int32 inX, int32 inY)
 {
+
 	FVector Location = InitialPoint;
 	Location.X += inX * DiffBeetweenGridCells;
 	Location.Y += inY * DiffBeetweenGridCells;
@@ -72,8 +73,13 @@ void UFloorGrid::GetCellCordinates(FVector ActiveLocation, int32& OutX, int32& O
 	OutX = FMath::FloorToInt32(AdjustedVector.X / DiffBeetweenGridCells);
 	OutY = FMath::FloorToInt32(AdjustedVector.Y / DiffBeetweenGridCells);
 
-	OutX = FMath::Clamp<int32>(OutX, 0, Rows - 1);
-	OutY = FMath::Clamp<int32>(OutY, 0, Columns - 1);
+	if (OutX < 0 || OutX >= Rows || OutY < 0 || OutY >= Columns)
+	{
+		OutX = -1;
+		OutY = -1;
+	}
+	//OutX = FMath::Clamp<int32>(OutX, 0, Rows - 1);
+	//OutY = FMath::Clamp<int32>(OutY, 0, Columns - 1);
 }
 
 void UFloorGrid::SetGridElement(int32 inX, int32 inY, bool bIsWalkable)
@@ -169,6 +175,13 @@ void UFloorGrid::GetGridElement(int32 inX, int32 inY, int32& OutX, int32& OutY, 
 		OutX = Temp->X;
 		OutY = Temp->Y;
 		bIsWalkable = Temp->bIsWalkable;
+	}
+
+	else
+	{
+		OutX = -1;
+		OutY = -1;
+		bIsWalkable = false;
 	}
 }
 

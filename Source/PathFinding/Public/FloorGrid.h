@@ -43,10 +43,17 @@ public:
 
 	void InitialGrid();
 
+	inline int32 GetRows() { return Rows; }
+	inline int32 GetColumns() { return Columns; }
+
 public:
 	UFUNCTION(BlueprintCallable)
 	FVector GetGridWorldPosition(int32 inX, int32 inY);
 
+
+	/*
+	@param OutX - if function fail outx will return as -1
+	@param Outy - if function fail outy will return as -1*/
 	UFUNCTION(BlueprintCallable)
 	void GetCellCordinates(FVector ActiveLocation, int32& OutX, int32& OutY);
 

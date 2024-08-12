@@ -2,6 +2,10 @@
 
 
 #include "BaseObjects.h"
+#include "Kismet/GameplayStatics.h"
+#include "PathFindingGameMode.h"
+#include "FloorGrid.h"
+
 
 // Sets default values
 ABaseObjects::ABaseObjects()
@@ -17,6 +21,8 @@ void ABaseObjects::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	SetObjectSizeXandY();
+	SetLocationProperties(GetActorLocation());
 }
 
 // Called every frame
@@ -30,17 +36,40 @@ void ABaseObjects::SetObjectLocation(const FVector& NewLocation, const float Gri
 {
 	FVector SpawnLocation = FVector::ZeroVector;
 
-	SpawnLocation.X = (SizeX - 1) * GridCellDistance;
-	SpawnLocation.Y = (SizeY - 1) * GridCellDistance;
+	SpawnLocation.X = (((float)SizeX) / 2) * GridCellDistance;
+	SpawnLocation.Y = (((float)SizeY) / 2) * GridCellDistance;
 
 	SpawnLocation = SpawnLocation + NewLocation;
 
 	SetActorLocation(SpawnLocation);
+	SetLocationProperties(NewLocation);
 }
 
-
-
-void ABaseObjects::SetLocationProperties()
+void ABaseObjects::SetLocationProperties(const FVector& NewLocation)
 {
+	APathFindingGameMode* GM = Cast<APathFindingGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	if (!GM || !GM->GridRef) return;
+	int32 XLocation, YLocation;
+	GM->GridRef->GetCellCordinates(NewLocation, XLocation, YLocation);
+	
+	if (XLocation < 0 || XLocation + SizeX > GM->GridRef->GetRows()) return;
+	if (YLocation < 0 || YLocation + SizeY > GM->GridRef->GetColumns()) return;
+
+	for (int32 i = XLocation; i < (XLocation + SizeX); i++)
+	{
+		for (int32 j = YLocation; j < (YLocation + SizeY); j++)
+		{
+			GridCell* Ref = GM->GridRef->GetGridElement(i, j);
+			Ref->bIsWalkable = false;
+		}
+	}
+
+}
+
+void ABaseObjects::SetObjectSizeXandY()
+{
+	FVector ScaleVector = ObjectMesh->GetComponentScale();
+	SizeX = FMath::FloorToInt32(ScaleVector.X);
+	SizeY = FMath::FloorToInt32(ScaleVector.Y);
 }
 
