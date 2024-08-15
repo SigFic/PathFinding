@@ -28,5 +28,6 @@ private:
 	float CalculateF(GridCell* CurrenCell, GridCell* EndCell);
 	TArray<GridCell*> ReconstructPath(TMap<GridCell*, GridCell*> CameFrom, GridCell* CurrentCell);
 	TArray< GridCell*> FindPath(UFloorGrid* Grid, GridCell* StartCell, GridCell* EndCell);
+	TArray< GridCell*> GetNeighbors(GridCell* ActiveCell);
 
 };

@@ -13,7 +13,7 @@ ABaseObjects::ABaseObjects()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	ObjectMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
-	SetLocationProperties(GetActorLocation());
+	//SetLocationProperties(GetActorLocation());
 
 }
 
@@ -53,7 +53,7 @@ void ABaseObjects::SetObjectLocation(const FVector& NewLocation, const float Gri
 
 	SpawnLocation.X = (((float)SizeX) / 2) * GridCellDistance;
 	SpawnLocation.Y = (((float)SizeY) / 2) * GridCellDistance;
-	SpawnLocation.Z = 12.5f;
+	SpawnLocation.Z = (((float)Hight) / 2) * GridCellDistance;
 
 	SpawnLocation = SpawnLocation + NewLocation;
 
@@ -80,6 +80,7 @@ void ABaseObjects::SetLocationProperties(const FVector& NewLocation)
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("i and j : %d , %d"), i, j);	
 			if(GM->GridRef->GetGridElement(i,j))GM->GridRef->GetGridElement(i, j)->bIsWalkable = false;
+			if(GM->GridRef->GetGridElement(i,j))GM->GridRef->GetGridElement(i, j)->Z = Hight;
 		}
 	}
 
@@ -90,5 +91,6 @@ void ABaseObjects::SetObjectSizeXandY()
 	FVector ScaleVector = ObjectMesh->GetComponentScale();
 	SizeX = FMath::FloorToInt32(ScaleVector.X);
 	SizeY = FMath::FloorToInt32(ScaleVector.Y);
+	Hight = FMath::FloorToInt32(ScaleVector.Z);
 }
 

@@ -20,11 +20,13 @@ TArray<FVector> UPathFinder::GetPath(int32 StartX, int32 StartY, int32 EndX, int
 	GridCell* Start = FloorGrid->GetGridElement(StartX, StartY);
 	GridCell* End = FloorGrid->GetGridElement(EndX, EndY);
 
+	/*Came Back here later and redesign to Walking system*/
 	if (!End->bIsWalkable)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("End Grid cell is not walkable"));
 		return TArray<FVector>();
 	}
+
 	TArray<GridCell* > PathInGridCells = FindPath(FloorGrid, Start, End);
 	UE_LOG(LogTemp, Warning, TEXT("pathSize : %d"), PathInGridCells.Num());
 	TArray<FVector> PathInVector;
@@ -69,19 +71,11 @@ TArray<GridCell*> UPathFinder::FindPath(UFloorGrid* Grid, GridCell* StartCell, G
 
 		OpenSet.Remove(Current);
 
-		TArray<GridCell*> Neighbors;
-		if (Current->East && Current->East->bIsWalkable) Neighbors.Add(Current->East);
-		if (Current->West && Current->West->bIsWalkable) Neighbors.Add(Current->West);
-		if (Current->North && Current->North->bIsWalkable) Neighbors.Add(Current->North);
-		if (Current->South && Current->South->bIsWalkable) Neighbors.Add(Current->South);
-		if (Current->SouthEast && Current->SouthEast->bIsWalkable && Current->South && Current->East && (Current->South->bIsWalkable && Current->East->bIsWalkable)) Neighbors.Add(Current->SouthEast);
-		if (Current->SouthWest && Current->SouthWest->bIsWalkable && Current->South && Current->West && (Current->South->bIsWalkable && Current->West->bIsWalkable)) Neighbors.Add(Current->SouthWest);
-		if (Current->NorthEast && Current->NorthEast->bIsWalkable && Current->North && Current->East && (Current->North->bIsWalkable && Current->East->bIsWalkable)) Neighbors.Add(Current->NorthEast);
-		if (Current->NorthWest && Current->NorthWest->bIsWalkable && Current->North && Current->West && (Current->North->bIsWalkable && Current->West->bIsWalkable)) Neighbors.Add(Current->NorthWest);
 
-		for (GridCell* Neighbor : Neighbors)
+		for (GridCell* Neighbor : GetNeighbors(Current))
 		{
-			if (!Neighbor || !Neighbor->bIsWalkable) continue;
+			//if (!Neighbor || !Neighbor->bIsWalkable) continue;
+			if (!Neighbor || FMath::Abs(Current->Z - Neighbor->Z) > 1) continue;
 
 			float TentativeGScore = GScores[Current] + CalculateG();
 
@@ -102,6 +96,100 @@ TArray<GridCell*> UPathFinder::FindPath(UFloorGrid* Grid, GridCell* StartCell, G
 
 	UE_LOG(LogTemp, Warning, TEXT("No path found"));
 	return TArray<GridCell*>();
+}
+
+TArray<GridCell*> UPathFinder::GetNeighbors(GridCell* ActiveCell)
+{
+	TArray<GridCell*> Neighbors;
+	//if (ActiveCell->Ways[2] && ActiveCell->Ways[2]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[2]);
+	//if (ActiveCell->Ways[6] && ActiveCell->Ways[6]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[6]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[6]);
+	//if (ActiveCell->Ways[0] && ActiveCell->Ways[0]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[0]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[0]);
+	//if (ActiveCell->Ways[4] && ActiveCell->Ways[4]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[4]);
+	//if (ActiveCell->Ways[3] && ActiveCell->Ways[3]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1) && ActiveCell->Ways[4] && ActiveCell->Ways[2] && (ActiveCell->Ways[4]->bIsWalkable && ActiveCell->Ways[2]->bIsWalkable)) Neighbors.Add(ActiveCell->Ways[3]);
+	//if (ActiveCell->Ways[5] && ActiveCell->Ways[5]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1) && ActiveCell->Ways[4] && ActiveCell->Ways[6] && (ActiveCell->Ways[4]->bIsWalkable && ActiveCell->Ways[6]->bIsWalkable)) Neighbors.Add(ActiveCell->Ways[5]);
+	//if (ActiveCell->Ways[1] && ActiveCell->Ways[1]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1) && ActiveCell->Ways[0] && ActiveCell->Ways[2] && (ActiveCell->Ways[0]->bIsWalkable && ActiveCell->Ways[2]->bIsWalkable)) Neighbors.Add(ActiveCell->Ways[1]);
+	//if (ActiveCell->Ways[7] && ActiveCell->Ways[7]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1) && ActiveCell->Ways[0] && ActiveCell->Ways[6] && (ActiveCell->Ways[0]->bIsWalkable && ActiveCell->Ways[6]->bIsWalkable)) Neighbors.Add(ActiveCell->Ways[7]);
+	for (int i = 0; i < 8; i++)
+	{
+		switch (i)
+		{
+		case 0:
+			if (ActiveCell->Ways[0] && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[0]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[0]);
+			break;
+
+		case 1:
+			if (!ActiveCell->Ways[1]) continue;
+			if ((FMath::Abs(ActiveCell->Z - ActiveCell->Ways[1]->Z) > 1)) continue;
+
+			if (ActiveCell->Ways[0] || ActiveCell->Ways[2]) 
+			{
+				if ((ActiveCell->Ways[0]->Z - ActiveCell->Z) > 1 && (ActiveCell->Ways[2]->Z - ActiveCell->Z) > 1) continue;
+				Neighbors.Add(ActiveCell->Ways[1]);
+				break;
+			}
+
+			Neighbors.Add(ActiveCell->Ways[1]);
+			break;
+
+		case 2:
+			if (ActiveCell->Ways[2] && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[2]);
+			break;
+
+		case 3:
+			if (!ActiveCell->Ways[3]) continue;
+			if ((FMath::Abs(ActiveCell->Z - ActiveCell->Ways[3]->Z) > 1)) continue;
+
+			if (ActiveCell->Ways[2] || ActiveCell->Ways[4])
+			{
+				if ((ActiveCell->Ways[2]->Z - ActiveCell->Z) > 1 && (ActiveCell->Ways[4]->Z - ActiveCell->Z) > 1) continue;
+				Neighbors.Add(ActiveCell->Ways[1]);
+				break;
+			}
+
+			Neighbors.Add(ActiveCell->Ways[1]);
+			break;
+
+		case 4:
+			if (ActiveCell->Ways[4] && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[4]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[4]);
+			break;
+
+		case 5:
+			if (!ActiveCell->Ways[5]) continue;
+			if ((FMath::Abs(ActiveCell->Z - ActiveCell->Ways[5]->Z) > 1)) continue;
+
+			if (ActiveCell->Ways[4] || ActiveCell->Ways[5])
+			{
+				if ((ActiveCell->Ways[4]->Z - ActiveCell->Z) > 1 && (ActiveCell->Ways[5]->Z - ActiveCell->Z) > 1) continue;
+				Neighbors.Add(ActiveCell->Ways[1]);
+				break;
+			}
+
+			Neighbors.Add(ActiveCell->Ways[1]);
+			break;
+
+		case 6:
+			if (ActiveCell->Ways[6] && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[6]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[6]);
+			break;
+
+		case 7:
+			if (!ActiveCell->Ways[7]) continue;
+			if ((FMath::Abs(ActiveCell->Z - ActiveCell->Ways[7]->Z) > 1)) continue;
+
+			if (ActiveCell->Ways[0] || ActiveCell->Ways[6])
+			{
+				if ((ActiveCell->Ways[0]->Z - ActiveCell->Z) > 1 && (ActiveCell->Ways[6]->Z - ActiveCell->Z) > 1) continue;
+				Neighbors.Add(ActiveCell->Ways[1]);
+				break;
+			}
+
+			Neighbors.Add(ActiveCell->Ways[1]);
+			break;
+
+		default:
+			break;
+		}
+	}
+	return Neighbors;
 }
 
 float UPathFinder::CalculateHeuristic(GridCell* CurrentCell, GridCell* TargetCell)

@@ -17,6 +17,7 @@ struct GridCell
 public:
 	int32 X;
 	int32 Y;
+	int32 Z = 0;
 
 	bool bIsWalkable;
 
@@ -25,15 +26,19 @@ public:
 		Y = inY;
 		bIsWalkable = binIsWalkable;
 	}
+	
+	/*
+	North = 0;
+	NorthEast = 1;
+	East = 2;
+	SouthEast = 3;
+	South = 4;
+	SouthWest = 5;
+	West = 6;
+	NorthWest = 7;
+	*/
+	GridCell* Ways[8];
 
-	GridCell* North = nullptr;
-	GridCell* South = nullptr;
-	GridCell* East = nullptr;
-	GridCell* West = nullptr;
-	GridCell* NorthWest = nullptr;
-	GridCell* SouthWest = nullptr;
-	GridCell* NorthEast = nullptr;
-	GridCell* SouthEast = nullptr;
 };
 
 

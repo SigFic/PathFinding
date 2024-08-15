@@ -47,14 +47,14 @@ void UFloorGrid::setNeighbords()
 			
 			if (Temp)
 			{
-				Temp->East = GetGridElement(i , j + 1);
-				Temp->West = GetGridElement(i , j  -1);
-				Temp->North = GetGridElement(i + 1 , j);
-				Temp->South = GetGridElement(i - 1, j);
-				Temp->NorthEast = GetGridElement(i + 1, j + 1);
-				Temp->NorthWest = GetGridElement(i + 1, j - 1);
-				Temp->SouthEast = GetGridElement(i - 1, j + 1);
-				Temp->SouthWest = GetGridElement(i - 1, j - 1);
+				Temp->Ways[2] = GetGridElement(i , j + 1);
+				Temp->Ways[6] = GetGridElement(i , j  -1);
+				Temp->Ways[0] = GetGridElement(i + 1, j);
+				Temp->Ways[4] = GetGridElement(i - 1, j);
+				Temp->Ways[1] = GetGridElement(i + 1, j + 1);
+				Temp->Ways[7] = GetGridElement(i + 1, j - 1);
+				Temp->Ways[3] = GetGridElement(i - 1, j + 1);
+				Temp->Ways[5] = GetGridElement(i - 1, j - 1);
 			}
 		}
 	}
@@ -110,23 +110,23 @@ void UFloorGrid::SetGridElement(int32 inX, int32 inY, bool bIsAvailable)
 			GridCell* NorthEastNeighbor = GetGridElement(inX + 1, inY + 1);
 			GridCell* NorthWestNeighbor = GetGridElement(inX + 1, inY - 1);
 
-			Temp->East = EastNeighbor;
-			Temp->West = WestNeighbor;
-			Temp->North = NorthNeighbor;
-			Temp->South = SouthNeighbor;
-			Temp->NorthEast = NorthEastNeighbor;
-			Temp->NorthWest = NorthWestNeighbor;
-			Temp->SouthWest = SouthWestNeighbor;
-			Temp->SouthEast = SouthEastNeighbor;
+			Temp->Ways[2] = EastNeighbor;
+			Temp->Ways[6] = WestNeighbor;
+			Temp->Ways[0] = NorthNeighbor;
+			Temp->Ways[4] = SouthNeighbor;
+			Temp->Ways[1] = NorthEastNeighbor;
+			Temp->Ways[7] = NorthWestNeighbor;
+			Temp->Ways[5] = SouthWestNeighbor;
+			Temp->Ways[3] = SouthEastNeighbor;
 
-			if (EastNeighbor) EastNeighbor->West = Temp;
-			if (WestNeighbor) WestNeighbor->East = Temp;
-			if (NorthNeighbor) NorthNeighbor->South = Temp;
-			if (SouthNeighbor) SouthNeighbor->North = Temp;
-			if (SouthEastNeighbor) SouthEastNeighbor->NorthWest = Temp;
-			if (SouthWestNeighbor) SouthWestNeighbor->NorthEast = Temp;
-			if (NorthEastNeighbor) NorthEastNeighbor->SouthWest = Temp;
-			if (NorthWestNeighbor) NorthWestNeighbor->SouthEast = Temp;
+			if (EastNeighbor) EastNeighbor->Ways[6] = Temp;
+			if (WestNeighbor) WestNeighbor->Ways[2] = Temp;
+			if (NorthNeighbor) NorthNeighbor->Ways[4] = Temp;
+			if (SouthNeighbor) SouthNeighbor->Ways[0] = Temp;
+			if (SouthEastNeighbor) SouthEastNeighbor->Ways[7] = Temp;
+			if (SouthWestNeighbor) SouthWestNeighbor->Ways[1] = Temp;
+			if (NorthEastNeighbor) NorthEastNeighbor->Ways[5] = Temp;
+			if (NorthWestNeighbor) NorthWestNeighbor->Ways[3] = Temp;
 		}
 	}
 }
@@ -153,23 +153,23 @@ void UFloorGrid::SetGridElement(int32 inX, int32 inY, GridCell* GridPoint)
 			GridCell* NorthEastNeighbor = GetGridElement(inX + 1, inY + 1);
 			GridCell* NorthWestNeighbor = GetGridElement(inX + 1, inY - 1);
 
-			GridPoint->East = EastNeighbor;
-			GridPoint->West = WestNeighbor;
-			GridPoint->North = NorthNeighbor;
-			GridPoint->South = SouthNeighbor;
-			GridPoint->NorthEast = NorthEastNeighbor;
-			GridPoint->NorthWest = NorthWestNeighbor;
-			GridPoint->SouthWest = SouthWestNeighbor;
-			GridPoint->SouthEast = SouthEastNeighbor;
+			GridPoint->Ways[2] = EastNeighbor;
+			GridPoint->Ways[6] = WestNeighbor;
+			GridPoint->Ways[0] = NorthNeighbor;
+			GridPoint->Ways[4] = SouthNeighbor;
+			GridPoint->Ways[1] = NorthEastNeighbor;
+			GridPoint->Ways[7] = NorthWestNeighbor;
+			GridPoint->Ways[5] = SouthWestNeighbor;
+			GridPoint->Ways[3] = SouthEastNeighbor;
 
-			if (EastNeighbor) EastNeighbor->West = GridPoint;
-			if (WestNeighbor) WestNeighbor->East = GridPoint;
-			if (NorthNeighbor) NorthNeighbor->South = GridPoint;
-			if (SouthNeighbor) SouthNeighbor->North = GridPoint;
-			if (SouthEastNeighbor) SouthEastNeighbor->NorthWest = GridPoint;
-			if (SouthWestNeighbor) SouthWestNeighbor->NorthEast = GridPoint;
-			if (NorthEastNeighbor) NorthEastNeighbor->SouthWest = GridPoint;
-			if (NorthWestNeighbor) NorthWestNeighbor->SouthEast = GridPoint;
+			if (EastNeighbor) EastNeighbor->Ways[6] = GridPoint;
+			if (WestNeighbor) WestNeighbor->Ways[2] = GridPoint;
+			if (NorthNeighbor) NorthNeighbor->Ways[4] = GridPoint;
+			if (SouthNeighbor) SouthNeighbor->Ways[0] = GridPoint;
+			if (SouthEastNeighbor) SouthEastNeighbor->Ways[7] = GridPoint;
+			if (SouthWestNeighbor) SouthWestNeighbor->Ways[1] = GridPoint;
+			if (NorthEastNeighbor) NorthEastNeighbor->Ways[5] = GridPoint;
+			if (NorthWestNeighbor) NorthWestNeighbor->Ways[3] = GridPoint;
 		}
 	}
 }
