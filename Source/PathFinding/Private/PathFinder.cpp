@@ -70,10 +70,14 @@ TArray<GridCell*> UPathFinder::FindPath(UFloorGrid* Grid, GridCell* StartCell, G
 		OpenSet.Remove(Current);
 
 		TArray<GridCell*> Neighbors;
-		if (Current->East) Neighbors.Add(Current->East);
-		if (Current->West) Neighbors.Add(Current->West);
-		if (Current->North) Neighbors.Add(Current->North);
-		if (Current->South) Neighbors.Add(Current->South);
+		if (Current->East && Current->East->bIsWalkable) Neighbors.Add(Current->East);
+		if (Current->West && Current->West->bIsWalkable) Neighbors.Add(Current->West);
+		if (Current->North && Current->North->bIsWalkable) Neighbors.Add(Current->North);
+		if (Current->South && Current->South->bIsWalkable) Neighbors.Add(Current->South);
+		if (Current->SouthEast && Current->SouthEast->bIsWalkable && Current->South && Current->East && (Current->South->bIsWalkable && Current->East->bIsWalkable)) Neighbors.Add(Current->SouthEast);
+		if (Current->SouthWest && Current->SouthWest->bIsWalkable && Current->South && Current->West && (Current->South->bIsWalkable && Current->West->bIsWalkable)) Neighbors.Add(Current->SouthWest);
+		if (Current->NorthEast && Current->NorthEast->bIsWalkable && Current->North && Current->East && (Current->North->bIsWalkable && Current->East->bIsWalkable)) Neighbors.Add(Current->NorthEast);
+		if (Current->NorthWest && Current->NorthWest->bIsWalkable && Current->North && Current->West && (Current->North->bIsWalkable && Current->West->bIsWalkable)) Neighbors.Add(Current->NorthWest);
 
 		for (GridCell* Neighbor : Neighbors)
 		{

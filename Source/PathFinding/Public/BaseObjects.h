@@ -19,6 +19,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void WhenGridCreated(class UFloorGrid* GridRef);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -26,18 +29,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetObjectLocation(const FVector& NewLocation, const float GridCellDistance);
 
-	void SetLocationProperties(const FVector& NewLocation);
-
-
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ObjectMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	int32 SizeX;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	int32 SizeY;
+
+	void SetLocationProperties(const FVector& NewLocation);
 
 	void SetObjectSizeXandY();
 };

@@ -51,6 +51,10 @@ void UFloorGrid::setNeighbords()
 				Temp->West = GetGridElement(i , j  -1);
 				Temp->North = GetGridElement(i + 1 , j);
 				Temp->South = GetGridElement(i - 1, j);
+				Temp->NorthEast = GetGridElement(i + 1, j + 1);
+				Temp->NorthWest = GetGridElement(i + 1, j - 1);
+				Temp->SouthEast = GetGridElement(i - 1, j + 1);
+				Temp->SouthWest = GetGridElement(i - 1, j - 1);
 			}
 		}
 	}
@@ -82,57 +86,47 @@ void UFloorGrid::GetCellCordinates(FVector ActiveLocation, int32& OutX, int32& O
 	//OutY = FMath::Clamp<int32>(OutY, 0, Columns - 1);
 }
 
-void UFloorGrid::SetGridElement(int32 inX, int32 inY, bool bIsWalkable)
+void UFloorGrid::SetGridElement(int32 inX, int32 inY, bool bIsAvailable)
 {
 	if (inX >= 0 && inX < Rows && inY >= 0 && inY < Columns)
 	{
-		/*GridCell* Temp = Grid[inX][inY];
-		delete Temp;
-		Temp = new GridCell(inX, inY, bIsWalkable);
-		Grid[inX][inY] = nullptr;
-		if (Temp)
-		{
-			Grid[inX][inY] = Temp;	
-			Temp->East = GetGridElement(inX, inY + 1);
-			if (GetGridElement(inX, inY + 1)) GetGridElement(inX, inY + 1)->West = Temp;
-
-			Temp->West = GetGridElement(inX, inY - 1);
-			if (GetGridElement(inX, inY - 1)) GetGridElement(inX, inY - 1)->East = Temp;
-
-			Temp->North = GetGridElement(inX + 1, inY);
-			if (GetGridElement(inX + 1, inY)) GetGridElement(inX + 1, inY)->North = Temp;
-
-			Temp->South = GetGridElement(inX - 1, inY);
-			if (GetGridElement(inX - 1, inY)) GetGridElement(inX - 1, inY)->South = Temp;
-		}*/
-
 		if (Grid[inX][inY])
 		{
 			delete Grid[inX][inY];
 		}
-		Grid[inX][inY] = new GridCell(inX, inY, bIsWalkable);
+		Grid[inX][inY] = new GridCell(inX, inY, bIsAvailable);
 
 		GridCell* Temp = Grid[inX][inY];
 
 		if (Temp)
 		{
-			// Komþu hücreleri al
+
 			GridCell* EastNeighbor = GetGridElement(inX, inY + 1);
 			GridCell* WestNeighbor = GetGridElement(inX, inY - 1);
 			GridCell* NorthNeighbor = GetGridElement(inX + 1, inY);
 			GridCell* SouthNeighbor = GetGridElement(inX - 1, inY);
+			GridCell* SouthEastNeighbor = GetGridElement(inX - 1, inY + 1);
+			GridCell* SouthWestNeighbor = GetGridElement(inX - 1, inY - 1);
+			GridCell* NorthEastNeighbor = GetGridElement(inX + 1, inY + 1);
+			GridCell* NorthWestNeighbor = GetGridElement(inX + 1, inY - 1);
 
-			// Temp hücresinin komþularýný ata
 			Temp->East = EastNeighbor;
 			Temp->West = WestNeighbor;
 			Temp->North = NorthNeighbor;
 			Temp->South = SouthNeighbor;
+			Temp->NorthEast = NorthEastNeighbor;
+			Temp->NorthWest = NorthWestNeighbor;
+			Temp->SouthWest = SouthWestNeighbor;
+			Temp->SouthEast = SouthEastNeighbor;
 
-			// Komþu hücrelere Temp hücresini ata
 			if (EastNeighbor) EastNeighbor->West = Temp;
 			if (WestNeighbor) WestNeighbor->East = Temp;
 			if (NorthNeighbor) NorthNeighbor->South = Temp;
 			if (SouthNeighbor) SouthNeighbor->North = Temp;
+			if (SouthEastNeighbor) SouthEastNeighbor->NorthWest = Temp;
+			if (SouthWestNeighbor) SouthWestNeighbor->NorthEast = Temp;
+			if (NorthEastNeighbor) NorthEastNeighbor->SouthWest = Temp;
+			if (NorthWestNeighbor) NorthWestNeighbor->SouthEast = Temp;
 		}
 	}
 }
@@ -149,39 +143,52 @@ void UFloorGrid::SetGridElement(int32 inX, int32 inY, GridCell* GridPoint)
 
 		if (GridPoint)
 		{
+
 			GridCell* EastNeighbor = GetGridElement(inX, inY + 1);
 			GridCell* WestNeighbor = GetGridElement(inX, inY - 1);
 			GridCell* NorthNeighbor = GetGridElement(inX + 1, inY);
 			GridCell* SouthNeighbor = GetGridElement(inX - 1, inY);
+			GridCell* SouthEastNeighbor = GetGridElement(inX - 1, inY + 1);
+			GridCell* SouthWestNeighbor = GetGridElement(inX - 1, inY - 1);
+			GridCell* NorthEastNeighbor = GetGridElement(inX + 1, inY + 1);
+			GridCell* NorthWestNeighbor = GetGridElement(inX + 1, inY - 1);
 
 			GridPoint->East = EastNeighbor;
 			GridPoint->West = WestNeighbor;
 			GridPoint->North = NorthNeighbor;
 			GridPoint->South = SouthNeighbor;
+			GridPoint->NorthEast = NorthEastNeighbor;
+			GridPoint->NorthWest = NorthWestNeighbor;
+			GridPoint->SouthWest = SouthWestNeighbor;
+			GridPoint->SouthEast = SouthEastNeighbor;
 
 			if (EastNeighbor) EastNeighbor->West = GridPoint;
 			if (WestNeighbor) WestNeighbor->East = GridPoint;
 			if (NorthNeighbor) NorthNeighbor->South = GridPoint;
 			if (SouthNeighbor) SouthNeighbor->North = GridPoint;
+			if (SouthEastNeighbor) SouthEastNeighbor->NorthWest = GridPoint;
+			if (SouthWestNeighbor) SouthWestNeighbor->NorthEast = GridPoint;
+			if (NorthEastNeighbor) NorthEastNeighbor->SouthWest = GridPoint;
+			if (NorthWestNeighbor) NorthWestNeighbor->SouthEast = GridPoint;
 		}
 	}
 }
 
-void UFloorGrid::GetGridElement(int32 inX, int32 inY, int32& OutX, int32& OutY, bool& bIsWalkable)
+void UFloorGrid::GetGridElement(int32 inX, int32 inY, int32& OutX, int32& OutY, bool& bIsAvailable)
 {
 	if (inX >= 0 && inX < Rows && inY >= 0 && inY < Columns)
 	{
 		GridCell* Temp = Grid[inX][inY];
 		OutX = Temp->X;
 		OutY = Temp->Y;
-		bIsWalkable = Temp->bIsWalkable;
+		bIsAvailable = Temp->bIsWalkable;
 	}
 
 	else
 	{
 		OutX = -1;
 		OutY = -1;
-		bIsWalkable = false;
+		bIsAvailable = false;
 	}
 }
 
@@ -192,4 +199,26 @@ GridCell* UFloorGrid::GetGridElement(int32 inX, int32 inY)
 		return Grid[inX][inY];
 	}
 	return nullptr;
+}
+
+void UFloorGrid::SetCellbIsWalkable(GridCell* Cell)
+{
+	if (!Cell) return;
+	if (!Cell->bIsWalkable)
+	{
+		return;
+	}
+
+	int32 X = Cell->X;
+	int32 Y = Cell->Y;
+
+	if (!GetGridElement(X + 1, Y + 1)->bIsWalkable && !GetGridElement(X - 1, Y - 1)->bIsWalkable)
+	{
+		return;
+	}
+	else if (!GetGridElement(X - 1, Y + 1)->bIsWalkable && !GetGridElement(X + 1, Y - 1)->bIsWalkable)
+	{
+		return;
+	}
+
 }

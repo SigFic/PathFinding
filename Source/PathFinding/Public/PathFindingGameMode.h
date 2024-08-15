@@ -9,6 +9,8 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGridDelegate, class UFloorGrid*, GridRef);
+
 UCLASS()
 class PATHFINDING_API APathFindingGameMode : public AGameModeBase
 {
@@ -28,7 +30,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void PrintGrid();
 
+	FGridDelegate OnGridStartDelegate;
+
 protected:
 	virtual void BeginPlay() override;
+
+private:
 	
 };

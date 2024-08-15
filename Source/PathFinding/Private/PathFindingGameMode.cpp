@@ -17,6 +17,7 @@ void APathFindingGameMode::BeginPlay()
 	if (GridRef)
 	{
 		GridRef->InitialGrid();
+		OnGridStartDelegate.Broadcast(GridRef);
 		PrintGrid();
 	}
 

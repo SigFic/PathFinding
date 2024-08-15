@@ -30,6 +30,10 @@ public:
 	GridCell* South = nullptr;
 	GridCell* East = nullptr;
 	GridCell* West = nullptr;
+	GridCell* NorthWest = nullptr;
+	GridCell* SouthWest = nullptr;
+	GridCell* NorthEast = nullptr;
+	GridCell* SouthEast = nullptr;
 };
 
 
@@ -45,6 +49,7 @@ public:
 
 	inline int32 GetRows() { return Rows; }
 	inline int32 GetColumns() { return Columns; }
+	inline int32 GetDistanceBeetweenCells() { return DiffBeetweenGridCells; }
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -66,6 +71,8 @@ public:
 	void GetGridElement(int32 inX, int32 inY, int32& OutX, int32& OutY, bool& bIsWalkable);
 
 	GridCell* GetGridElement(int32 inX, int32 inY);
+
+	void SetCellbIsWalkable(GridCell* Cell);
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Grid", meta = (AllowPrivateAccess = "true"))
