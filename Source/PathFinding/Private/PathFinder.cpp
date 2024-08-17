@@ -21,11 +21,11 @@ TArray<FVector> UPathFinder::GetPath(int32 StartX, int32 StartY, int32 EndX, int
 	GridCell* End = FloorGrid->GetGridElement(EndX, EndY);
 
 	/*Came Back here later and redesign to Walking system*/
-	if (!End->bIsWalkable)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("End Grid cell is not walkable"));
-		return TArray<FVector>();
-	}
+	//if (!End->bIsWalkable)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("End Grid cell is not walkable"));
+	//	return TArray<FVector>();
+	//}
 
 	TArray<GridCell* > PathInGridCells = FindPath(FloorGrid, Start, End);
 	UE_LOG(LogTemp, Warning, TEXT("pathSize : %d"), PathInGridCells.Num());
@@ -34,6 +34,7 @@ TArray<FVector> UPathFinder::GetPath(int32 StartX, int32 StartY, int32 EndX, int
 	for (int32 i = 0; i < PathInGridCells.Num(); i++)
 	{
 		FVector CurrentVector = FloorGrid->GetGridWorldPosition(PathInGridCells[i]->X, PathInGridCells[i]->Y);
+		CurrentVector.Z = (PathInGridCells[i]->Z * FloorGrid->GetDistanceBeetweenCells());
 		PathInVector.Add(CurrentVector);
 	}
 	return PathInVector;
@@ -100,15 +101,8 @@ TArray<GridCell*> UPathFinder::FindPath(UFloorGrid* Grid, GridCell* StartCell, G
 
 TArray<GridCell*> UPathFinder::GetNeighbors(GridCell* ActiveCell)
 {
-	TArray<GridCell*> Neighbors;
-	//if (ActiveCell->Ways[2] && ActiveCell->Ways[2]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[2]);
-	//if (ActiveCell->Ways[6] && ActiveCell->Ways[6]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[6]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[6]);
-	//if (ActiveCell->Ways[0] && ActiveCell->Ways[0]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[0]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[0]);
-	//if (ActiveCell->Ways[4] && ActiveCell->Ways[4]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[4]);
-	//if (ActiveCell->Ways[3] && ActiveCell->Ways[3]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1) && ActiveCell->Ways[4] && ActiveCell->Ways[2] && (ActiveCell->Ways[4]->bIsWalkable && ActiveCell->Ways[2]->bIsWalkable)) Neighbors.Add(ActiveCell->Ways[3]);
-	//if (ActiveCell->Ways[5] && ActiveCell->Ways[5]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1) && ActiveCell->Ways[4] && ActiveCell->Ways[6] && (ActiveCell->Ways[4]->bIsWalkable && ActiveCell->Ways[6]->bIsWalkable)) Neighbors.Add(ActiveCell->Ways[5]);
-	//if (ActiveCell->Ways[1] && ActiveCell->Ways[1]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1) && ActiveCell->Ways[0] && ActiveCell->Ways[2] && (ActiveCell->Ways[0]->bIsWalkable && ActiveCell->Ways[2]->bIsWalkable)) Neighbors.Add(ActiveCell->Ways[1]);
-	//if (ActiveCell->Ways[7] && ActiveCell->Ways[7]->bIsWalkable && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1) && ActiveCell->Ways[0] && ActiveCell->Ways[6] && (ActiveCell->Ways[0]->bIsWalkable && ActiveCell->Ways[6]->bIsWalkable)) Neighbors.Add(ActiveCell->Ways[7]);
+	/*TArray<GridCell*> Neighbors;
+
 	for (int i = 0; i < 8; i++)
 	{
 		switch (i)
@@ -189,6 +183,36 @@ TArray<GridCell*> UPathFinder::GetNeighbors(GridCell* ActiveCell)
 			break;
 		}
 	}
+	return Neighbors;*/
+	TArray<GridCell*> Neighbors;
+
+	for (int i = 0; i < 8; i++)
+	{
+		GridCell* Neighbor = ActiveCell->Ways[i];
+		if (!Neighbor) continue; // Eðer komþu hücre yoksa atla
+
+		// Z seviyesindeki farký kontrol et
+		if (FMath::Abs(ActiveCell->Z - Neighbor->Z) > 1) continue;
+
+		// Köþe komþular için ek kontrol
+		if (i % 2 == 1) // Köþe komþularý 1, 3, 5, 7
+		{
+			GridCell* Adjacent1 = ActiveCell->Ways[(i - 1 + 8) % 8]; // Önceki komþu
+			GridCell* Adjacent2 = ActiveCell->Ways[(i + 1) % 8];     // Sonraki komþu
+
+			if (Adjacent1 && Adjacent2)
+			{
+				// Eðer her iki komþu da mevcut ve Z farký 1'den büyükse bu köþe komþusunu eklemeyin
+				if (FMath::Abs(Adjacent1->Z - ActiveCell->Z) > 1 && FMath::Abs(Adjacent2->Z - ActiveCell->Z) > 1)
+				{
+					continue;
+				}
+			}
+		}
+
+		Neighbors.Add(Neighbor);
+	}
+
 	return Neighbors;
 }
 

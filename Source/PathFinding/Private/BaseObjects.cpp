@@ -37,7 +37,7 @@ void ABaseObjects::WhenGridCreated(UFloorGrid* GridRef)
 	Location.Y = -(((float)SizeY) / 2) * GridRef->GetDistanceBeetweenCells();
 
 	Location = Location + GetActorLocation();
-	SetObjectLocation(Location, GridRef->GetDistanceBeetweenCells());
+	SetLocationProperties(Location);
 }
 
 // Called every frame
@@ -51,9 +51,9 @@ void ABaseObjects::SetObjectLocation(const FVector& NewLocation, const float Gri
 {
 	FVector SpawnLocation = FVector::ZeroVector;
 
-	SpawnLocation.X = (((float)SizeX) / 2) * GridCellDistance;
-	SpawnLocation.Y = (((float)SizeY) / 2) * GridCellDistance;
-	SpawnLocation.Z = (((float)Hight) / 2) * GridCellDistance;
+	SpawnLocation.X = ((ObjectMesh->GetComponentScale().X / 2) * GridCellDistance);
+	SpawnLocation.Y = ((ObjectMesh->GetComponentScale().Y / 2) * GridCellDistance);
+	SpawnLocation.Z = ((ObjectMesh->GetComponentScale().Z / 2) * GridCellDistance);
 
 	SpawnLocation = SpawnLocation + NewLocation;
 
@@ -91,6 +91,7 @@ void ABaseObjects::SetObjectSizeXandY()
 	FVector ScaleVector = ObjectMesh->GetComponentScale();
 	SizeX = FMath::FloorToInt32(ScaleVector.X);
 	SizeY = FMath::FloorToInt32(ScaleVector.Y);
-	Hight = FMath::FloorToInt32(ScaleVector.Z);
+	Hight = FMath::CeilToInt32(ScaleVector.Z);
+	//FMath::Toint32
 }
 

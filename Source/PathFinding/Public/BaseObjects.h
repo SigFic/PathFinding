@@ -39,6 +39,8 @@ private:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	int32 SizeY;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	int32 Hight;
 
 	void SetLocationProperties(const FVector& NewLocation);
