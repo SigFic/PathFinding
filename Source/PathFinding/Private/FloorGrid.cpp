@@ -222,3 +222,32 @@ void UFloorGrid::SetCellbIsWalkable(GridCell* Cell)
 	}
 
 }
+
+bool UFloorGrid::IsWalkable(const int32& inStartX, const int32& inStartY, const int32& inEndX, const int32& inEndY)
+{
+	GridCell* Start = GetGridElement(inStartX, inStartY);
+	GridCell* Target = GetGridElement(inEndX, inEndY);
+	if (!Start || !Target) return false;
+	if (FMath::Abs(Start->Z - Target->Z) > 1) return false;
+
+	for (int32 i = 1; i < 8; i += 2)
+	{
+		if (Start->Ways[i] == Target)
+		{
+			GridCell* Adjacent1 = Start->Ways[(i - 1 + 8) % 8]; 
+			GridCell* Adjacent2 = Start->Ways[(i + 1) % 8];     
+
+			if (Adjacent1 && Adjacent2)
+			{
+				if ((Adjacent1->Z - Start->Z) > 1 && (Adjacent2->Z - Start->Z) > 1)
+				{
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+

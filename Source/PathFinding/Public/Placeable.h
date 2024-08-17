@@ -18,7 +18,11 @@ public:
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable)
 	void SetObjectLocation(const FVector& NewLocation, float DistanceBeetweenGrids);
+
+	UFUNCTION(BlueprintCallable)
+	void SetSizeVectors(float DistanceBetweenGrids);
 
 protected:
 
@@ -32,11 +36,14 @@ private:
 
 	TMap<class UStaticMeshComponent*, FVector> SizeVectors;
 
+	FVector SizeVector;
+
+	UStaticMeshComponent* ParentStaticMeshRef;
+
 	TArray<UStaticMeshComponent*> Meshes;
 
 	void SetLocationProperties(const FVector& NewLocation, UStaticMeshComponent* MeshRef);
 
-	void SetSizeVectors(float DistanceBetweenGrids);
 
 		
 };

@@ -101,89 +101,6 @@ TArray<GridCell*> UPathFinder::FindPath(UFloorGrid* Grid, GridCell* StartCell, G
 
 TArray<GridCell*> UPathFinder::GetNeighbors(GridCell* ActiveCell)
 {
-	/*TArray<GridCell*> Neighbors;
-
-	for (int i = 0; i < 8; i++)
-	{
-		switch (i)
-		{
-		case 0:
-			if (ActiveCell->Ways[0] && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[0]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[0]);
-			break;
-
-		case 1:
-			if (!ActiveCell->Ways[1]) continue;
-			if ((FMath::Abs(ActiveCell->Z - ActiveCell->Ways[1]->Z) > 1)) continue;
-
-			if (ActiveCell->Ways[0] || ActiveCell->Ways[2]) 
-			{
-				if ((ActiveCell->Ways[0]->Z - ActiveCell->Z) > 1 && (ActiveCell->Ways[2]->Z - ActiveCell->Z) > 1) continue;
-				Neighbors.Add(ActiveCell->Ways[1]);
-				break;
-			}
-
-			Neighbors.Add(ActiveCell->Ways[1]);
-			break;
-
-		case 2:
-			if (ActiveCell->Ways[2] && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[2]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[2]);
-			break;
-
-		case 3:
-			if (!ActiveCell->Ways[3]) continue;
-			if ((FMath::Abs(ActiveCell->Z - ActiveCell->Ways[3]->Z) > 1)) continue;
-
-			if (ActiveCell->Ways[2] || ActiveCell->Ways[4])
-			{
-				if ((ActiveCell->Ways[2]->Z - ActiveCell->Z) > 1 && (ActiveCell->Ways[4]->Z - ActiveCell->Z) > 1) continue;
-				Neighbors.Add(ActiveCell->Ways[1]);
-				break;
-			}
-
-			Neighbors.Add(ActiveCell->Ways[1]);
-			break;
-
-		case 4:
-			if (ActiveCell->Ways[4] && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[4]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[4]);
-			break;
-
-		case 5:
-			if (!ActiveCell->Ways[5]) continue;
-			if ((FMath::Abs(ActiveCell->Z - ActiveCell->Ways[5]->Z) > 1)) continue;
-
-			if (ActiveCell->Ways[4] || ActiveCell->Ways[5])
-			{
-				if ((ActiveCell->Ways[4]->Z - ActiveCell->Z) > 1 && (ActiveCell->Ways[5]->Z - ActiveCell->Z) > 1) continue;
-				Neighbors.Add(ActiveCell->Ways[1]);
-				break;
-			}
-
-			Neighbors.Add(ActiveCell->Ways[1]);
-			break;
-
-		case 6:
-			if (ActiveCell->Ways[6] && (FMath::Abs(ActiveCell->Z - ActiveCell->Ways[6]->Z) <= 1)) Neighbors.Add(ActiveCell->Ways[6]);
-			break;
-
-		case 7:
-			if (!ActiveCell->Ways[7]) continue;
-			if ((FMath::Abs(ActiveCell->Z - ActiveCell->Ways[7]->Z) > 1)) continue;
-
-			if (ActiveCell->Ways[0] || ActiveCell->Ways[6])
-			{
-				if ((ActiveCell->Ways[0]->Z - ActiveCell->Z) > 1 && (ActiveCell->Ways[6]->Z - ActiveCell->Z) > 1) continue;
-				Neighbors.Add(ActiveCell->Ways[1]);
-				break;
-			}
-
-			Neighbors.Add(ActiveCell->Ways[1]);
-			break;
-
-		default:
-			break;
-		}
-	}
-	return Neighbors;*/
 	TArray<GridCell*> Neighbors;
 
 	for (int i = 0; i < 8; i++)
@@ -203,7 +120,7 @@ TArray<GridCell*> UPathFinder::GetNeighbors(GridCell* ActiveCell)
 			if (Adjacent1 && Adjacent2)
 			{
 				// Eðer her iki komþu da mevcut ve Z farký 1'den büyükse bu köþe komþusunu eklemeyin
-				if (FMath::Abs(Adjacent1->Z - ActiveCell->Z) > 1 && FMath::Abs(Adjacent2->Z - ActiveCell->Z) > 1)
+				if ((Adjacent1->Z - ActiveCell->Z) > 1 && (Adjacent2->Z - ActiveCell->Z) > 1)
 				{
 					continue;
 				}

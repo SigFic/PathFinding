@@ -79,6 +79,9 @@ public:
 
 	void SetCellbIsWalkable(GridCell* Cell);
 
+	UFUNCTION(BlueprintCallable)
+	bool IsWalkable(const int32& inStartX, const int32& inStartY, const int32& inEndX, const int32& inEndY);
+
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Grid", meta = (AllowPrivateAccess = "true"))
 	int32 Rows;

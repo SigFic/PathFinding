@@ -25,14 +25,7 @@ void UPlaceable::BeginPlay()
 	if (!ParenComponent) return;
 
 	UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(ParenComponent);
-	if (MeshComponent) Meshes.Add(MeshComponent);
-
-	TArray<USceneComponent*> ChildComponents = ParenComponent->GetAttachChildren();
-	for (USceneComponent* ChildComp : ChildComponents)
-	{
-		UStaticMeshComponent* ChildMeshComponent = Cast<UStaticMeshComponent>(ChildComp);
-		if(ChildMeshComponent) Meshes.AddUnique(ChildMeshComponent);
-	}
+	if (MeshComponent) ParentStaticMeshRef = MeshComponent;
 
 	APathFindingGameMode* GM = Cast<APathFindingGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (GM)
@@ -44,15 +37,13 @@ void UPlaceable::BeginPlay()
 void UPlaceable::WhenGridCreated(UFloorGrid* GridRef)
 {
 	SetSizeVectors(GridRef->GetDistanceBeetweenCells());
-	for (UStaticMeshComponent* MeshRef : Meshes)
-	{
-		FVector Location = FVector::ZeroVector;
-		Location.X = -(((float)SizeVectors[MeshRef].X) / 2) * GridRef->GetDistanceBeetweenCells();
-		Location.Y = -(((float)SizeVectors[MeshRef].Y) / 2) * GridRef->GetDistanceBeetweenCells();
 
-		Location = Location + GetComponentLocation();
-		SetLocationProperties(Location, MeshRef);
-	}
+	FVector Location = FVector::ZeroVector;
+	Location.X = -(((float)SizeVector.X) / 2) * GridRef->GetDistanceBeetweenCells();
+	Location.Y = -(((float)SizeVector.Y) / 2) * GridRef->GetDistanceBeetweenCells();
+
+	Location = Location + GetComponentLocation();
+	SetLocationProperties(Location, ParentStaticMeshRef);
 }
 
 void UPlaceable::SetLocationProperties(const FVector& NewLocation, UStaticMeshComponent* MeshRef)
@@ -66,8 +57,8 @@ void UPlaceable::SetLocationProperties(const FVector& NewLocation, UStaticMeshCo
 	//UE_LOG(LogTemp, Warning, TEXT("X and Y : %d , %d"), XLocation, YLocation);
 	FVector CheckVector = GM->GridRef->GetGridWorldPosition(XLocation, YLocation);
 
-	int32 SizeX = (int32)SizeVectors[MeshRef].X;
-	int32 SizeY = (int32)SizeVectors[MeshRef].Y;
+	int32 SizeX = SizeVector.X;
+	int32 SizeY = SizeVector.Y;
 
 	if (NewLocation.X != CheckVector.X) SizeX++;
 	if (NewLocation.Y != CheckVector.Y) SizeY++;
@@ -78,29 +69,25 @@ void UPlaceable::SetLocationProperties(const FVector& NewLocation, UStaticMeshCo
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("i and j : %d , %d"), i, j);	
 			if (GM->GridRef->GetGridElement(i, j))GM->GridRef->GetGridElement(i, j)->bIsWalkable = false;
-			if (GM->GridRef->GetGridElement(i, j))GM->GridRef->GetGridElement(i, j)->Z = SizeVectors[MeshRef].Z;
+			if (GM->GridRef->GetGridElement(i, j))GM->GridRef->GetGridElement(i, j)->Z = SizeVector.Z;
 		}
 	}
 }
 
 void UPlaceable::SetSizeVectors(float DistanceBetweenGrids)
 {
-	for (UStaticMeshComponent* MeshRef : Meshes)
-	{
-		if (!MeshRef) continue;
-		FVector BoundsVector = MeshRef->GetStaticMesh()->GetBounds().GetBox().GetSize();
-		BoundsVector = BoundsVector * MeshRef->GetComponentTransform().GetScale3D();
 
-		int32 X = FMath::FloorToInt32(BoundsVector.X / DistanceBetweenGrids);
-		int32 Y = FMath::FloorToInt32(BoundsVector.Y / DistanceBetweenGrids);
-		float Z = FMath::CeilToInt32(BoundsVector.Z / DistanceBetweenGrids);
+	if (!ParentStaticMeshRef) return;
+	FVector BoundsVector = ParentStaticMeshRef->GetStaticMesh()->GetBounds().GetBox().GetSize();
+	BoundsVector = BoundsVector * ParentStaticMeshRef->GetComponentTransform().GetScale3D();
 
-		FVector SizeVector = FVector((float)X, (float)Y, Z);
+	int32 X = FMath::FloorToInt32(BoundsVector.X / DistanceBetweenGrids);
+	int32 Y = FMath::FloorToInt32(BoundsVector.Y / DistanceBetweenGrids);
+	float Z = FMath::CeilToInt32(BoundsVector.Z / DistanceBetweenGrids);
 
-		SizeVectors.Add(MeshRef, SizeVector);
-	}
+	SizeVector = FVector((float)X, (float)Y, Z);
+
 }
-
 
 // Called every frame
 void UPlaceable::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -121,6 +108,18 @@ void UPlaceable::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 
 void UPlaceable::SetObjectLocation(const FVector& NewLocation, float DistanceBeetweenGrids)
 {
+	FVector SpawnLocation = FVector::ZeroVector;
 
+	SpawnLocation.X = ((ParentStaticMeshRef->GetComponentScale().X / 2) * DistanceBeetweenGrids);
+	SpawnLocation.Y = ((ParentStaticMeshRef->GetComponentScale().Y / 2) * DistanceBeetweenGrids);
+	SpawnLocation.Z = ((ParentStaticMeshRef->GetComponentScale().Z / 2) * DistanceBeetweenGrids);
+
+	SpawnLocation = SpawnLocation + NewLocation;
+
+	AActor* ParentOwner = ParentStaticMeshRef->GetOwner();
+	ParentOwner->SetActorLocation(SpawnLocation);
+
+	//SetComponentLocation(SpawnLocation);
+	SetLocationProperties(NewLocation, ParentStaticMeshRef);
 }
 
