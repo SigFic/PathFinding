@@ -45,6 +45,8 @@ void ABaseObjects::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	
+
 }
 
 void ABaseObjects::SetObjectLocation(const FVector& NewLocation, const float GridCellDistance)
