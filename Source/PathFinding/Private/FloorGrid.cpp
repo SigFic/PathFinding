@@ -29,7 +29,7 @@ void UFloorGrid::CreateGrid()
 	{
 		for (int32 j = 0; j < Columns; j++)
 		{
-			GridCell* Temp = new GridCell(i, j, true);
+			GridCell* Temp = new GridCell(i, j, 0);
 			Grid[i][j] = Temp;
 			Temp = nullptr;
 			delete Temp;
@@ -86,7 +86,7 @@ void UFloorGrid::GetCellCordinates(FVector ActiveLocation, int32& OutX, int32& O
 	//OutY = FMath::Clamp<int32>(OutY, 0, Columns - 1);
 }
 
-void UFloorGrid::SetGridElement(int32 inX, int32 inY, bool bIsAvailable)
+void UFloorGrid::SetGridElement(int32 inX, int32 inY, int32 inZ)
 {
 	if (inX >= 0 && inX < Rows && inY >= 0 && inY < Columns)
 	{
@@ -94,7 +94,7 @@ void UFloorGrid::SetGridElement(int32 inX, int32 inY, bool bIsAvailable)
 		{
 			delete Grid[inX][inY];
 		}
-		Grid[inX][inY] = new GridCell(inX, inY, bIsAvailable);
+		Grid[inX][inY] = new GridCell(inX, inY, inZ);
 
 		GridCell* Temp = Grid[inX][inY];
 
@@ -174,21 +174,21 @@ void UFloorGrid::SetGridElement(int32 inX, int32 inY, GridCell* GridPoint)
 	}
 }
 
-void UFloorGrid::GetGridElement(int32 inX, int32 inY, int32& OutX, int32& OutY, bool& bIsAvailable)
+void UFloorGrid::GetGridElement(int32 inX, int32 inY, int32& OutX, int32& OutY, int32& OutZ)
 {
 	if (inX >= 0 && inX < Rows && inY >= 0 && inY < Columns)
 	{
 		GridCell* Temp = Grid[inX][inY];
 		OutX = Temp->X;
 		OutY = Temp->Y;
-		bIsAvailable = Temp->bIsWalkable;
+		OutZ = Temp->Z;
 	}
 
 	else
 	{
 		OutX = -1;
 		OutY = -1;
-		bIsAvailable = false;
+		OutZ = -1;
 	}
 }
 
@@ -201,27 +201,6 @@ GridCell* UFloorGrid::GetGridElement(int32 inX, int32 inY)
 	return nullptr;
 }
 
-void UFloorGrid::SetCellbIsWalkable(GridCell* Cell)
-{
-	if (!Cell) return;
-	if (!Cell->bIsWalkable)
-	{
-		return;
-	}
-
-	int32 X = Cell->X;
-	int32 Y = Cell->Y;
-
-	if (!GetGridElement(X + 1, Y + 1)->bIsWalkable && !GetGridElement(X - 1, Y - 1)->bIsWalkable)
-	{
-		return;
-	}
-	else if (!GetGridElement(X - 1, Y + 1)->bIsWalkable && !GetGridElement(X + 1, Y - 1)->bIsWalkable)
-	{
-		return;
-	}
-
-}
 
 bool UFloorGrid::IsWalkable(const int32& inStartX, const int32& inStartY, const int32& inEndX, const int32& inEndY)
 {

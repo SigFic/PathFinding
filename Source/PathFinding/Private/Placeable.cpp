@@ -60,15 +60,15 @@ void UPlaceable::SetLocationProperties(const FVector& NewLocation, UStaticMeshCo
 	int32 SizeX = SizeVector.X;
 	int32 SizeY = SizeVector.Y;
 
-	if (NewLocation.X != CheckVector.X) SizeX++;
-	if (NewLocation.Y != CheckVector.Y) SizeY++;
+	if (FMath::Abs(NewLocation.X - CheckVector.X) > (float)GM->GridRef->GetDistanceBeetweenCells() / 2.f ) XLocation++;
+	if (FMath::Abs(NewLocation.Y - CheckVector.Y) > (float)GM->GridRef->GetDistanceBeetweenCells() / 2.f ) YLocation++;
+	//if (NewLocation.Y != CheckVector.Y) SizeY++;
 
 	for (int32 i = XLocation; i < (XLocation + SizeX); i++)
 	{
 		for (int32 j = YLocation; j < (YLocation + SizeY); j++)
-		{
-			//UE_LOG(LogTemp, Warning, TEXT("i and j : %d , %d"), i, j);	
-			if (GM->GridRef->GetGridElement(i, j))GM->GridRef->GetGridElement(i, j)->bIsWalkable = false;
+		{	
+			//if (GM->GridRef->GetGridElement(i, j))GM->GridRef->GetGridElement(i, j)->bIsWalkable = false;
 			if (GM->GridRef->GetGridElement(i, j))GM->GridRef->GetGridElement(i, j)->Z = SizeVector.Z;
 		}
 	}

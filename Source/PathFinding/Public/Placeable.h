@@ -8,7 +8,7 @@
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PATHFINDING_API UPlaceable : public USceneComponent
+class PATHFINDING_API UPlaceable : public UPrimitiveComponent
 {
 	GENERATED_BODY()
 

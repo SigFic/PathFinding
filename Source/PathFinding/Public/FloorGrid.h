@@ -19,12 +19,12 @@ public:
 	int32 Y;
 	int32 Z = 0;
 
-	bool bIsWalkable;
+	bool bIsWalkable = true;
 
-	GridCell(int32 inX, int32 inY, bool binIsWalkable) {
+	GridCell(int32 inX, int32 inY, int32 inZ) {
 		X = inX;
 		Y = inY;
-		bIsWalkable = binIsWalkable;
+		Z = inZ;
 	}
 	
 	/*
@@ -68,16 +68,15 @@ public:
 	void GetCellCordinates(FVector ActiveLocation, int32& OutX, int32& OutY);
 
 	UFUNCTION(BlueprintCallable)
-	void SetGridElement(int32 inX, int32 inY, bool bIsWalkable);
+	void SetGridElement(int32 inX, int32 inY, int32 inZ);
 
 	void SetGridElement(int32 inX, int32 inY, GridCell* GridPoint);
 	
 	UFUNCTION(BlueprintCallable)
-	void GetGridElement(int32 inX, int32 inY, int32& OutX, int32& OutY, bool& bIsWalkable);
+	void GetGridElement(int32 inX, int32 inY, int32& OutX, int32& OutY, int32& OutZ);
 
 	GridCell* GetGridElement(int32 inX, int32 inY);
 
-	void SetCellbIsWalkable(GridCell* Cell);
 
 	UFUNCTION(BlueprintCallable)
 	bool IsWalkable(const int32& inStartX, const int32& inStartY, const int32& inEndX, const int32& inEndY);

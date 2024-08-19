@@ -17,9 +17,12 @@ class PATHFINDING_API APathController : public APlayerController
 public:
 	APathController();
 
+
 protected: 
 
 	virtual void BeginPlay() override;
+
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Grid", meta = (AllowPrivateAccess = "true"))
 	class UPathFinder* PathFinderRef;

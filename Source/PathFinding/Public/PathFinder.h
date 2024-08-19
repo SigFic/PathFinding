@@ -21,6 +21,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FVector> GetPath(int32 StartX, int32 StartY, int32 EndX, int32 EndY, class UFloorGrid* FloorGrid);
 
+	/*if you increase this value algorithm usualy will find short path but with more calculation */
+	float GManipulator = 1.f;
+
+	/*if you increate this value algorithm will target the target location more agressively, however this can sometimes lead to worse path being choose*/
+	float HManipulator = 1.f;
+
 private:
 
 	float CalculateHeuristic(struct GridCell* CurrentCell, GridCell* TargetCell);

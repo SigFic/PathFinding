@@ -136,7 +136,7 @@ TArray<GridCell*> UPathFinder::GetNeighbors(GridCell* ActiveCell)
 float UPathFinder::CalculateHeuristic(GridCell* CurrentCell, GridCell* TargetCell)
 {
 	//manhattan Function(Manhattan Distance)
-	return FMath::Abs(CurrentCell->X - TargetCell->X) + FMath::Abs(CurrentCell->Y - CurrentCell->Y);
+	return FMath::Abs(CurrentCell->X - TargetCell->X) + FMath::Abs(CurrentCell->Y - TargetCell->Y);
 }
 
 float UPathFinder::CalculateG()
@@ -148,8 +148,9 @@ float UPathFinder::CalculateG()
 float UPathFinder::CalculateF(GridCell* CurrenCell, GridCell* EndCell)
 {
 	// F = G + H
-	return CalculateG() + CalculateHeuristic(CurrenCell, EndCell);
+	return (GManipulator * CalculateG()) + (HManipulator * CalculateHeuristic(CurrenCell, EndCell));
 }
+
 
 TArray<GridCell*> UPathFinder::ReconstructPath(TMap<GridCell*, GridCell*> CameFrom, GridCell* CurrentCell)
 {
